@@ -18,7 +18,7 @@ exports.getAll = async (req, res) => {
     }
 
     try {
-        const resp = await userService.getAll();
+        const serviceResponse = await userService.getAll();
         
         response.message = 'Success';
         response.data = serviceResponse.rows;
