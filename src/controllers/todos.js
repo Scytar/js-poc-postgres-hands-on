@@ -12,18 +12,31 @@ exports.getAll = async (req, res) => {
     // Precisa tratar algum input?      Não
         // Não precisa fazer nada
 
+    
+    // Pradronizar a resposta
+    const response = {
+        message:'',
+        data:null,
+        error: null
+    }
+
     try {
         // Chama o método do Service
-        const resp = await todoService.getAll();
+        const serviceResponse = await todoService.getAll();
 
         // Retornar com sucesso
-        res.status(200).send(resp);
-        // res.status(200).send(JSON.stringify(resp.rows));
+        res.status(200).send(serviceResponse);
+        // response.message = 'Success';
+        // response.data = serviceResponse.rows;
+
+        // res.status(200).send(JSON.stringify(response));
         console.timeEnd('getAll()')
 
     } catch (error) {
         console.log(TAG, error)
-        res.status(500).send("Erro interno do Servidor!");
+        
+        response.error = 'Erro interno do Servidor'
+        res.status(500).send(JSON.stringify(response));
         console.timeEnd('getAll()')
     }
 };
@@ -46,18 +59,30 @@ exports.getTodo = async (req, res) => {
         console.timeEnd('getTodo()')
         //return;          // Exemplo de erro com 2 res.send();
     }
+    
+    // Pradronizar a resposta
+    const response = {
+        message:'',
+        data:null,
+        error: null
+    }
 
     try {
         // Chama o método do Service enviando input tratado
-        const resp = await todoService.getTodo(id);
+        const serviceResponse = await todoService.getTodo(id);
 
         // Retornar com sucesso
-        res.status(200).send(JSON.stringify(resp.rows));
+        response.message = 'Success';
+        response.data = serviceResponse.rows;
+
+        res.status(200).send(JSON.stringify(response));
         console.timeEnd('getTodo()')
             
     } catch (error) {
         console.log(TAG, error)
-        res.status(500).send("Erro interno do Servidor!");
+        
+        response.error = 'Erro interno do Servidor'
+        res.status(500).send(JSON.stringify(response));
         console.timeEnd('getTodo()')
     }
 }
@@ -80,17 +105,30 @@ exports.getTopTodos = async (req, res) => {
         return;
     }
 
+    
+    // Pradronizar a resposta
+    const response = {
+        message:'',
+        data:null,
+        error: null
+    }
+
     try {
         // Chama o método do Service enviando input tratado
-        const resp = await todoService.getTopTodos(count);
+        const serviceResponse = await todoService.getTopTodos(count);
 
         // Retornar com sucesso
-        res.status(200).send(JSON.stringify(resp.rows));
+        response.message = 'Success';
+        response.data = serviceResponse.rows;
+
+        res.status(200).send(JSON.stringify(response));
         console.timeEnd('getTopTodos()')
             
     } catch (error) {
         console.log(TAG, error)
-        res.status(500).send("Erro interno do Servidor!");
+        
+        response.error = 'Erro interno do Servidor'
+        res.status(500).send(JSON.stringify(response));
         console.timeEnd('getTopTodos()')
     }
 }
@@ -114,17 +152,30 @@ exports.createTodo = async (req, res) => {
         return;
     }
     
+    
+    // Pradronizar a resposta
+    const response = {
+        message:'',
+        data:null,
+        error: null
+    }
+
     try {
         // Chama o método do Service
-        const resp = await todoService.createTodo(newTodo);
+        const serviceResponse = await todoService.createTodo(newTodo);
 
         // Retornar com sucesso
-        res.status(201).send(JSON.stringify(resp.rows));
+        response.message = 'Success';
+        response.data = serviceResponse.rows;
+
+        res.status(200).send(JSON.stringify(response));
         console.timeEnd('createTodo()')
 
     } catch (error) {
         console.log(TAG, error)
-        res.status(500).send("Erro interno do Servidor!");
+        
+        response.error = 'Erro interno do Servidor'
+        res.status(500).send(JSON.stringify(response));
         console.timeEnd('createTodo()')
     }
 }
@@ -145,17 +196,30 @@ exports.updateTodo = async (req, res) => {
         return;
     }
     
+    
+    // Pradronizar a resposta
+    const response = {
+        message:'',
+        data:null,
+        error: null
+    }
+
     try {
         // Chama o método do Service
-        const resp = await todoService.updateTodo(newTodo);
+        const serviceResponse = await todoService.updateTodo(newTodo);
 
         // Retornar com sucesso
-        res.status(200).send(JSON.stringify(resp.rows));
+        response.message = 'Success';
+        response.data = serviceResponse.rows;
+
+        res.status(200).send(JSON.stringify(response));
         console.timeEnd('updateTodo()')
 
     } catch (error) {
         console.log(TAG, error)
-        res.status(500).send("Erro interno do Servidor!");
+        
+        response.error = 'Erro interno do Servidor'
+        res.status(500).send(JSON.stringify(response));
         console.timeEnd('updateTodo()')
     }
 }
@@ -177,26 +241,40 @@ exports.deleteTodo = async (req, res) => {
         return;
     }
 
+    
+    // Pradronizar a resposta
+    const response = {
+        message:'',
+        data:null,
+        error: null
+    }
+
     try {
         // Chama o método do Service enviando input tratado
-        const resp = await todoService.deleteTodo(todoId, userId)
+        const serviceResponse = await todoService.deleteTodo(todoId, userId)
         // Retornar com sucesso
-        if (resp == "No affected rows") {
-            res.status(400).send(JSON.stringify(resp));
+        if (serviceResponse == "No affected rows") {
+            res.status(400).send(JSON.stringify(serviceResponse));
             console.timeEnd('deleteTodo()')
             return;
         }
 
-        const response = {
-            todo:resp.todosResponse.rows,
-            user:resp.usersResponse.rows
+        const data = {
+            todo:serviceResponse.todosResponse.rows,
+            user:serviceResponse.usersResponse.rows
         }
+
+        response.message = 'Success';
+        response.data = data;
+
         res.status(200).send(JSON.stringify(response));
         console.timeEnd('deleteTodo()')
 
     } catch (error) {
         console.log(TAG, error)
-        res.status(500).send("Erro interno do Servidor!");
+        
+        response.error = 'Erro interno do Servidor'
+        res.status(500).send(JSON.stringify(response));
         console.timeEnd('deleteTodo()')
     }
 }
@@ -218,15 +296,26 @@ exports.injection = async (req, res) => {
         return;
     }
     
-    try {
-        const resp = await todoService.injection(newTodo);
+    const response = {
+        message:'',
+        data:null,
+        error: null
+    }
 
-        res.status(200).send(JSON.stringify(resp.rows));
+    try {
+        const serviceResponse = await todoService.injection(newTodo);
+
+        response.message = 'Success';
+        response.data = serviceResponse.rows;
+
+        res.status(200).send(JSON.stringify(response));
         console.timeEnd('injection()')
 
     } catch (error) {
         console.log(TAG, error)
-        res.status(500).send("Erro interno do Servidor!");
+        
+        response.error = 'Erro interno do Servidor'
+        res.status(500).send(JSON.stringify(response));
         console.timeEnd('injection()')
     }
 }

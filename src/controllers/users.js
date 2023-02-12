@@ -11,14 +11,25 @@ exports.getAll = async (req, res) => {
     console.log(TAG, "getAll() from " + req.connection.remoteAddress)
     console.time('getAll()')
 
+    const response = {
+        message:'',
+        data:null,
+        error: null
+    }
+
     try {
         const resp = await userService.getAll();
-        res.status(200).send(JSON.stringify(resp.rows));
+        
+        response.message = 'Success';
+        response.data = serviceResponse.rows;
+
+        res.status(200).send(JSON.stringify(response));
         console.timeEnd('getAll()')
         
     } catch (error) {
         console.log(TAG, error);
-        res.status(500).send("Erro interno do Servidor!");
+        response.error = 'Erro interno do Servidor'
+        res.status(500).send(JSON.stringify(response));
         console.timeEnd('getAll()')
     }
 
