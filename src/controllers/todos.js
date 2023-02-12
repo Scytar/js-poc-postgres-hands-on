@@ -28,7 +28,7 @@ exports.getAll = async (req, res) => {
         res.status(200).send(serviceResponse);
         // response.message = 'Success';
         // response.data = serviceResponse.rows;
-
+        //
         // res.status(200).send(JSON.stringify(response));
         console.timeEnd('getAll()')
 
@@ -51,20 +51,21 @@ exports.getTodo = async (req, res) => {
     console.time('getTodo()')
     // Precisa tratar algum input?      Sim
     const id = req.params.id;
-
-    // Verifica se foi informado um ID válido
-    if (isNaN(id)) {
-        console.log(TAG, "Parameter isNaN")
-        res.status(400).send('Informe um ID válido');
-        console.timeEnd('getTodo()')
-        //return;          // Exemplo de erro com 2 res.send();
-    }
     
     // Pradronizar a resposta
     const response = {
         message:'',
         data:null,
         error: null
+    }
+
+    // Verifica se foi informado um ID válido
+    if (isNaN(id)) {
+        console.log(TAG, "Parameter isNaN")
+        response.error = 'Informe uma ID válida'
+        res.status(400).send(JSON.stringify(response));
+        console.timeEnd('getTodo()')
+        //return;          // Exemplo de erro com 2 res.send();
     }
 
     try {
@@ -96,21 +97,21 @@ exports.getTopTodos = async (req, res) => {
     console.time('getTopTodos()')
     // Precisa tratar algum input?      Sim
     const count = req.params.count;
-
-    // Verifica se foi informado um valor válido
-    if (isNaN(count)) {
-        console.log(TAG, "Parameter isNaN")
-        res.status(400).send('Informe um valor válido');
-        console.timeEnd('getTopTodos()')
-        return;
-    }
-
     
     // Pradronizar a resposta
     const response = {
         message:'',
         data:null,
         error: null
+    }
+
+    // Verifica se foi informado um valor válido
+    if (isNaN(count)) {
+        console.log(TAG, "Parameter isNaN")
+        response.error = 'Informe um valor válido'
+        res.status(400).send(JSON.stringify(response));
+        console.timeEnd('getTopTodos()')
+        return;
     }
 
     try {
@@ -143,15 +144,6 @@ exports.createTodo = async (req, res) => {
     console.time('createTodo()')
     // Precisa tratar algum input?      Sim
     const newTodo = req.body;
-
-    // Verifica se os dados são válidos
-    if (isNaN(newTodo.priority)) {
-        console.log(TAG, "Priority isNaN")
-        res.status(400).send('Informe uma prioridade válida')
-        console.timeEnd('createTodo()')
-        return;
-    }
-    
     
     // Pradronizar a resposta
     const response = {
@@ -160,6 +152,15 @@ exports.createTodo = async (req, res) => {
         error: null
     }
 
+    // Verifica se os dados são válidos
+    if (isNaN(newTodo.priority)) {
+        console.log(TAG, "Priority isNaN")
+        response.error = 'Informe uma prioridade válida'
+        res.status(400).send(JSON.stringify(response));
+        console.timeEnd('createTodo()')
+        return;
+    }
+    
     try {
         // Chama o método do Service
         const serviceResponse = await todoService.createTodo(newTodo);
@@ -187,21 +188,21 @@ exports.updateTodo = async (req, res) => {
     console.time('updateTodo()')
     // Precisa tratar algum input?      Sim
     const newTodo = req.body;
-
-    // Verifica se os dados são válidos
-    if (isNaN(newTodo.priority) || isNaN(newTodo.id)) {
-        console.log(TAG, "Priority/Id isNaN")
-        res.status(400).send('Informe uma prioridade e/ou ID válida(s)')
-        console.timeEnd('updateTodo()')
-        return;
-    }
-    
     
     // Pradronizar a resposta
     const response = {
         message:'',
         data:null,
         error: null
+    }
+
+    // Verifica se os dados são válidos
+    if (isNaN(newTodo.priority) || isNaN(newTodo.id)) {
+        console.log(TAG, "Priority/Id isNaN")
+        response.error = 'Informe uma prioridade e/ou ID válida(s)'
+        res.status(400).send(JSON.stringify(response));
+        console.timeEnd('updateTodo()')
+        return;
     }
 
     try {
@@ -233,15 +234,6 @@ exports.deleteTodo = async (req, res) => {
     const todoId = req.params.id;
     const userId = req.params.userId;
 
-    // Verifica se foi informado um ID válido
-    if (isNaN(todoId) || isNaN(userId)) {
-        console.log(TAG, "An Id isNaN")
-        res.status(400).send('Informe IDs válido')
-        console.timeEnd('deleteTodo()')
-        return;
-    }
-
-    
     // Pradronizar a resposta
     const response = {
         message:'',
@@ -249,12 +241,22 @@ exports.deleteTodo = async (req, res) => {
         error: null
     }
 
+    // Verifica se foi informado um ID válido
+    if (isNaN(todoId) || isNaN(userId)) {
+        console.log(TAG, "An Id isNaN")
+        response.error = 'Informe IDs válidos'
+        res.status(400).send(JSON.stringify(response));
+        console.timeEnd('deleteTodo()')
+        return;
+    }
+
     try {
         // Chama o método do Service enviando input tratado
         const serviceResponse = await todoService.deleteTodo(todoId, userId)
         // Retornar com sucesso
         if (serviceResponse == "No affected rows") {
-            res.status(400).send(JSON.stringify(serviceResponse));
+            response.error = 'Nenhum valor alterado'
+            res.status(400).send(JSON.stringify(response));
             console.timeEnd('deleteTodo()')
             return;
         }
@@ -288,18 +290,19 @@ exports.injection = async (req, res) => {
     console.time('injection()')
     
     const newTodo = req.body;
-
-    if (isNaN(newTodo.priority) || isNaN(newTodo.id)) {
-        console.log(TAG, "Priority/Id isNaN")
-        res.status(400).send('Informe uma prioridade e/ou ID válida(s)')
-        console.timeEnd('injection()')
-        return;
-    }
     
     const response = {
         message:'',
         data:null,
         error: null
+    }
+
+    if (isNaN(newTodo.priority) || isNaN(newTodo.id)) {
+        console.log(TAG, "Priority/Id isNaN")
+        response.error = 'Informe uma prioridade e/ou ID válida(s)'
+        res.status(400).send(JSON.stringify(response))
+        console.timeEnd('injection()')
+        return;
     }
 
     try {
