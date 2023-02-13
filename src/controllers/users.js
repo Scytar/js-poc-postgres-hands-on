@@ -23,13 +23,17 @@ exports.getAll = async (req, res) => {
         response.message = 'Success';
         response.data = serviceResponse.rows;
 
-        res.status(200).send(JSON.stringify(response));
+        res.status(200).json(response);
         console.timeEnd('getAll()')
         
     } catch (error) {
-        console.log(TAG, error);
+        console.log(TAG, error)
+        
+        response.message = 'Erro interno do Servidor'
+        response.data = null;
         response.error = 'Erro interno do Servidor'
-        res.status(500).send(JSON.stringify(response));
+        
+        res.status(500).json(response);
         console.timeEnd('getAll()')
     }
 

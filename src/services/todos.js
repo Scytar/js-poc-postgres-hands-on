@@ -18,7 +18,8 @@ exports.getAll = async () => {
         return resp;
         
     } catch (error) {
-        console.log(TAG, error)
+        console.log(TAG, 'error caught');
+        throw error;
     }
 };
 
@@ -39,7 +40,8 @@ exports.getTodo = async (_id) => {
         return resp;
 
     } catch (error) {
-        console.log(TAG, error)
+        console.log(TAG, 'error caught');
+        throw error;
     }
 };
 
@@ -60,52 +62,49 @@ exports.getTopTodos = async (_count) => {
         return resp;
 
     } catch (error) {
-        console.log(TAG, error)
+        console.log(TAG, 'error caught');
+        throw error;
     }
 };
 
 
 
 
-exports.createTodo = async (_newTodo) => {
+exports.createTodo = async (_name, _priority) => {
     // Precisa calcular algo com os inputs?     Não
         // Não precisa fazer nada
 
     // Precisa pedir algo ao Bando de Dados?    Sim
     try {
     // Precisa filtrar/organizar?               Sim
-        // O Repository precisa receber os dados a serem inseridos como um array
-    const values = [_newTodo.name, _newTodo.priority];
-
-    const resp = await todoRepository.createTodo(values)
+    const resp = await todoRepository.createTodo(_name, _priority)
             // Precisa fazer algo internamente com esses dados?     Não
                 //Não precisa fazer nada, só retornar a informação
         return resp;
 
     } catch (error) {
-        console.log(TAG, error)
+        console.log(TAG, 'error caught');
+        throw error;
     }
 };
 
 
 
-exports.updateTodo = async (_newTodo) => {
+exports.updateTodo = async (_id, _name, _priority) => {
     // Precisa calcular algo com os inputs?     Não
         // Não precisa fazer nada
 
     // Precisa pedir algo ao Bando de Dados?    Sim
     try {
     // Precisa filtrar/organizar?               Sim
-        // O Repository precisa receber os dados a serem inseridos como um array
-    const values = [_newTodo.id, _newTodo.name, _newTodo.priority];
-
-    const resp = await todoRepository.updateTodo(values);
+    const resp = await todoRepository.updateTodo(_id, _name, _priority);
             // Precisa fazer algo internamente com esses dados?     Não
                 //Não precisa fazer nada, só retornar a informação
         return resp;
 
     } catch (error) {
-        console.log(TAG, error)
+        console.log(TAG, 'error caught');
+        throw error;
     }
 };
 
@@ -125,7 +124,8 @@ exports.deleteTodo = async (_id, _userId) => {
         return resp;
 
     } catch (error) {
-        console.log(TAG, error)
+        console.log(TAG, 'error caught');
+        throw error;
     }
 };
 
@@ -133,14 +133,13 @@ exports.deleteTodo = async (_id, _userId) => {
 
 
 // SQL INJECTION
-exports.injection = async (_newTodo) => {
+exports.injection = async (_id, _name, _priority) => {
     try {
-    const values = [_newTodo.id, _newTodo.name, _newTodo.priority];
-
-    const resp = await todoRepository.injection(values);
+    const resp = await todoRepository.injection(_id, _name, _priority);
         return resp;
 
     } catch (error) {
-        console.log(TAG, error)
+        console.log(TAG, 'error caught');
+        throw error;
     }
 };

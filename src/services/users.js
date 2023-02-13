@@ -10,6 +10,7 @@ exports.getAll = async () => {
         return resp;
                 
     } catch (error) {
-        console.log(TAG, error);
+        console.log(TAG, 'error caught');
+        throw error
     }
 };

@@ -8,10 +8,12 @@ exports.getAll = async () => {
     // Realiza a requisição
     try {
         const query = await pool.query('SELECT * FROM todos');
-        return query;
+        if (query.rows[0])  return query.rows;      // É papel do repository retornar apenas os resultados da query
+        throw new Error('No rows returned')                  // Envia um erro caso nenhuma linha seja retornada pelo postgres
         
     } catch (error) {
-        console.log(TAG, error);
+        console.log(TAG, 'error caught');
+        throw error;
     }
 };
 
@@ -20,10 +22,13 @@ exports.getAll = async () => {
 exports.getTodo = async (_id) => {
     // Realiza a requisição com filtragem/ordenação
     try {
-        return await pool.query('SELECT * FROM todos WHERE id = $1', [_id]);
+        const query = await (pool.query('SELECT * FROM todos WHERE id = $1', [_id]));
+        if (query.rows[0])  return query.rows;
+        throw new Error('No rows returned')
 
     } catch (error) {
-        console.log(TAG, error);
+        console.log(TAG, 'error caught');
+        throw error;
     }
 };
 
@@ -32,34 +37,41 @@ exports.getTodo = async (_id) => {
 exports.getTopTodos = async (_count) => {
     // Realiza a requisição com filtragem/ordenação
     try {
-        return await pool.query('SELECT * FROM todos ORDER BY priority DESC LIMIT $1', [_count])
+        const query = await pool.query('SELECT * FROM todos ORDER BY priority DESC LIMIT $1', [_count]);
+        if (query.rows[0])  return query.rows;
+        throw new Error('No rows returned')
         
     } catch (error) {
-        console.log(TAG, error);
+        console.log(TAG, 'error caught');
+        throw error;
     }
 }
 
 
 
-exports.createTodo = async (_values) => {
+exports.createTodo = async (_name, _priority) => {
     // Realiza a requisição com filtragem/ordenação
         try {
-        return await pool.query('INSERT INTO todos (name, priority) VALUES ($1,$2) RETURNING *', _values);
+            const query = await pool.query('INSERT INTO todos (name, priority) VALUES ($1,$2) RETURNING *', [_name, _priority]);
+            return query.rows
         
     } catch (error) {
-        console.log(TAG, error);
+        console.log(TAG, 'error caught');
+        throw error;
     }
 };
 
 
 
-exports.updateTodo = async (_values) => {
+exports.updateTodo = async (_id, _name, _priority) => {
     // Realiza a requisição com filtragem/ordenação
     try {
-        return await pool.query('UPDATE todos SET name = $2, priority = $3 WHERE id = $1 RETURNING *', _values);
+        const query = await pool.query('UPDATE todos SET name = $2, priority = $3 WHERE id = $1 RETURNING *', [_id, _name, _priority]);
+        return query.rows
         
     } catch (error) {
-        console.log(TAG, error);
+        console.log(TAG, 'error caught');
+        throw error;
     }
 };
 
@@ -79,8 +91,8 @@ exports.deleteTodo = async (_id, _userId) => {
         
         // Cria um objecto para retornar ao Service
         const myResponse = {
-            todosResponse: query1,
-            usersResponse: query2
+            todosResponse: query1.rows,
+            usersResponse: query2.rows
         }
 
         // Verifica se as queries foram realizadas com sucesso
@@ -91,10 +103,11 @@ exports.deleteTodo = async (_id, _userId) => {
         }
         
         await pool.query('rollback');   // Cancela a transaction
-        return "No affected rows";
+        throw new Error("No affected rows");
         
     } catch (error) {
-        console.log(TAG, error);
+        console.log(TAG, 'error caught');
+        throw error;
     }
 };
 
@@ -103,11 +116,13 @@ exports.deleteTodo = async (_id, _userId) => {
 
 
 // SQL INJECTION
-exports.injection = async (_values) => {
+exports.injection = async (_id, _name, _priority) => {
     try {
-        return await pool.query(`UPDATE todos SET priority = `+_values[2]+`, name = `+_values[1]); //Exemplo de SQL Injection
+        const query = await pool.query(`UPDATE todos SET priority = ` + _priority + `, name = ` + _name);   //Exemplo de SQL Injection
+        return query.rows
         
     } catch (error) {
-        console.log(TAG, error);
+        console.log(TAG, 'error caught');
+        throw error;
     }
 };
